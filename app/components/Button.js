@@ -1,16 +1,16 @@
 const Button = ({ children, onClick, loading, type, extra }) => {
     const types = {
-        primary: "btn-primary",
-        secondary: "btn-secondary",
-        accent: "btn-accent",
-        error: "btn-error",
-        success: "btn-success",
-        warning: "btn-warning",
-        info: "btn-info",
+        primary: "primary",
+        secondary: "secondary",
+        accent: "accent",
+        error: "error",
+        success: "success",
+        warning: "warning",
+        info: "info",
     };
     return (
         <button
-            className={`btn ${types[type]} ${extra} mx-2`}
+            className={`btn btn-${types[type]} ${extra}`}
             onClick={onClick}
             disabled={loading}
         >

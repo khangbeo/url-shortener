@@ -4,6 +4,7 @@ import { useState } from "react";
 import useLocalStorage from "./hooks/useLocalStorage";
 import Button from "./components/Button";
 import History from "./history";
+import { LuShrink } from "react-icons/lu";
 
 export default function Home() {
     const [url, setUrl] = useState("");
@@ -47,7 +48,6 @@ export default function Home() {
             handleError(error.message);
         }
     };
-    // get date and time from new Date().toLocaleDateString()
 
     const addToHistory = (oldUrl, newUrl) => {
         const date = new Date();
@@ -85,13 +85,18 @@ export default function Home() {
         }
 
         setLoading(true);
-        shortenUrl(url);
-        setLoading(false);
-        setShortenedUrl("");
-        setUrl("");
+        try {
+            shortenUrl(url);
+            setShortenedUrl("");
+            setUrl("");
+        } catch (error) {
+            handleError(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    console.log(theme);
+    console.log(loading);
     const handleChange = ({ target: { value } }) => setUrl(value);
     const handleThemeChange = () => {
         setTheme(theme === "light" ? "dark" : "light");
@@ -161,7 +166,7 @@ export default function Home() {
                                 onChange={handleChange}
                                 type="text"
                                 name="url"
-                                placeholder="http://google.com/"
+                                placeholder="http://google.com"
                                 value={url}
                             />
                             <Button
@@ -169,10 +174,12 @@ export default function Home() {
                                 type="primary"
                                 extra="join-item rounded-r-full"
                             >
+                                <LuShrink size={24} />
                                 Shorten
                             </Button>
                         </div>
                     </form>
+                    {loading && <div>loading...</div>}
                     {shortenedUrl && (
                         <div className="card bg-base-200 text-base-content w-full md:w-4/5 lg:w-6/12">
                             <div className="card-body items-center text-center">
@@ -190,6 +197,7 @@ export default function Home() {
                                     <Button
                                         type="primary"
                                         loading={loading}
+                                        extra="mx-2"
                                         onClick={() =>
                                             navigator.clipboard.writeText(
                                                 shortenedUrl
