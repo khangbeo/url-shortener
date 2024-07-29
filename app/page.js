@@ -1,6 +1,7 @@
 "use client";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const Button = ({ children, onClick, loading, btnClass }) => {
     return (
@@ -13,15 +14,28 @@ const Button = ({ children, onClick, loading, btnClass }) => {
 export default function Home() {
     const [url, setUrl] = useState("");
     const [shortenedUrl, setShortenedUrl] = useState("");
-    const [pastUrls, setPastUrls] = useState(() => {
-        return JSON.parse(localStorage.getItem("pastUrls")) || [];
-    });
+    const [pastUrls, setPastUrls] = useState([]);
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        localStorage.setItem("pastUrls", JSON.stringify(pastUrls));
+        const storedPastUrls = JSON.parse(localStorage.getItem("pastUrls"));
+        if (storedPastUrls) {
+            setPastUrls((prev) => [...prev, ...storedPastUrls]);
+        }
+    }, []);
+
+    useEffect(() => {
+        function storeLocalstorage() {
+            try {
+                localStorage.setItem("pastUrls", JSON.stringify(pastUrls));
+            } catch (error) {
+                console.error("Error storing data in localStorage:", error);
+            }
+        }
+
+        storeLocalstorage();
     }, [pastUrls]);
 
     function handleError(error) {
@@ -34,7 +48,7 @@ export default function Home() {
     function isInHistory(newUrl) {
         return pastUrls.some((url) => url.newUrl === newUrl.newUrl);
     }
-    // each url will its domain displayed
+
     const shortenUrl = async (url) => {
         const baseUrl = `/api/shortener`;
         const options = {
@@ -71,11 +85,11 @@ export default function Home() {
             setUrl("");
             return;
         }
-        setPastUrls([...pastUrls, updatedUrl]);
+        setPastUrls((prev) => [...prev, updatedUrl]);
     };
 
     const removeUrl = (id) => {
-        setPastUrls(pastUrls.filter((u) => u.id !== id));
+        setPastUrls((prevPastUrls) => prevPastUrls.filter((u) => u.id !== id));
     };
 
     const handleSubmit = async (e) => {
@@ -93,14 +107,14 @@ export default function Home() {
         setUrl("");
     };
 
-    const handleChange = (e) => {
-        setUrl(e.target.value);
-    };
+    const handleChange = ({ target: { value } }) => setUrl(value);
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-20">
             <div className="flex flex-col m-auto z-10 w-full max-w-5xl items-center justify-center gap-12">
-                <h1 className="text-center text-5xl">URL Shortener</h1>
+                <h1 className="text-center text-6xl font-bold">
+                    URL Shortener
+                </h1>
                 {error && <div>{error}</div>}
 
                 <form className="flex flex-col" onSubmit={handleSubmit}>
@@ -119,7 +133,7 @@ export default function Home() {
                         />
                         <Button
                             loading={loading}
-                            btnClass="btn join-item rounded-r-full"
+                            btnClass="btn btn-primary join-item rounded-r-full"
                         >
                             Shorten
                         </Button>
@@ -136,7 +150,7 @@ export default function Home() {
                             {shortenedUrl}
                         </a>
                         <Button
-                            btnClass="ml-3 btn"
+                            btnClass="ml-3 btn btn-primary"
                             loading={loading}
                             onClick={() =>
                                 navigator.clipboard.writeText(shortenedUrl)
@@ -156,15 +170,15 @@ export default function Home() {
                         <ul className="mt-5">
                             {pastUrls.map((url) => (
                                 <li key={url.id} className="mt-3 text-center">
-                                    <a
+                                    <Link
                                         className="text-blue-500 hover:text-blue-700"
                                         href={url.newUrl}
                                         target="_blank"
                                     >
                                         {url.newUrl}
-                                    </a>
+                                    </Link>
                                     <Button
-                                        btnClass="ml-3 btn"
+                                        btnClass="ml-3 btn btn-primary"
                                         loading={loading}
                                         onClick={() =>
                                             navigator.clipboard.writeText(
@@ -175,7 +189,7 @@ export default function Home() {
                                         Copy
                                     </Button>
                                     <Button
-                                        btnClass="ml-3 btn"
+                                        btnClass="ml-3 btn btn-error"
                                         loading={loading}
                                         onClick={() => removeUrl(url.id)}
                                     >
