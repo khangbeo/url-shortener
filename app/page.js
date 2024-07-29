@@ -121,7 +121,7 @@ export default function Home() {
                 </form>
                 {loading && <div>Loading...</div>}
                 {pastUrls.length > 0 && (
-                    <div className="rounded-lg bg-slate-900 p-3 w-full">
+                    <div className="rounded-lg bg-slate-900 p-3 w-full md:w-4/5 lg:w-6/12">
                         <h2 className="text-center text-2xl">History</h2>
                         <ul className="mt-5">
                             {pastUrls.map((url) => (
