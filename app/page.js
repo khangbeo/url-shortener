@@ -2,6 +2,14 @@
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 
+const Button = ({ children, onClick, loading, btnClass }) => {
+    return (
+        <button className={btnClass} onClick={onClick} disabled={loading}>
+            {children}
+        </button>
+    );
+};
+
 export default function Home() {
     const [url, setUrl] = useState("");
     const [shortenedUrl, setShortenedUrl] = useState("");
@@ -103,9 +111,9 @@ export default function Home() {
                     <label className="ml-6" htmlFor="url">
                         Enter URL
                     </label>
-                    <div className="mt-1">
+                    <div className="mt-1 join">
                         <input
-                            className="text-black rounded-l-full p-2"
+                            className="rounded-l-full input input-bordered join-item"
                             id="url"
                             onChange={handleChange}
                             type="text"
@@ -113,18 +121,42 @@ export default function Home() {
                             placeholder="http://google.com/"
                             value={url}
                         />
-                        <button
-                            className="bg-blue-500 rounded-r-full p-2 hover:bg-blue-700"
-                            type="submit"
+                        <Button
+                            loading={loading}
+                            btnClass="btn join-item rounded-r-full"
                         >
                             Shorten
-                        </button>
+                        </Button>
                     </div>
                 </form>
-                {loading && <div>Loading...</div>}
+                {shortenedUrl && (
+                    <div className="rounded-lg bg-base-200 p-5 w-full md:w-4/5 lg:w-6/12 text-center">
+                        <h3 className="text-2xl">Shortened URL</h3>
+                        <a
+                            className="text-blue-500 hover:text-blue-700"
+                            href={shortenedUrl}
+                            target="_blank"
+                        >
+                            {shortenedUrl}
+                        </a>
+                        <Button
+                            btnClass="ml-3 btn"
+                            loading={loading}
+                            onClick={() =>
+                                navigator.clipboard.writeText(shortenedUrl)
+                            }
+                        >
+                            Copy
+                        </Button>
+                    </div>
+                )}
                 {pastUrls.length > 0 && (
-                    <div className="rounded-lg bg-slate-900 p-3 w-full md:w-4/5 lg:w-6/12">
-                        <h2 className="text-center text-2xl">History</h2>
+                    <div
+                        className={`overflow-auto ${
+                            pastUrls.length > 5 ? "h-96" : ""
+                        } rounded-lg bg-base-200 p-5 w-full md:w-4/5 lg:w-6/12 text-center`}
+                    >
+                        <h3 className="text-2xl">History</h3>
                         <ul className="mt-5">
                             {pastUrls.map((url) => (
                                 <li key={url.id} className="mt-3 text-center">
@@ -135,8 +167,9 @@ export default function Home() {
                                     >
                                         {url.newUrl}
                                     </a>
-                                    <button
-                                        className="ml-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                    <Button
+                                        btnClass="ml-3 btn"
+                                        loading={loading}
                                         onClick={() =>
                                             navigator.clipboard.writeText(
                                                 url.newUrl
@@ -144,13 +177,14 @@ export default function Home() {
                                         }
                                     >
                                         Copy
-                                    </button>
-                                    <button
-                                        className="ml-3 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    </Button>
+                                    <Button
+                                        btnClass="ml-3 btn"
+                                        loading={loading}
                                         onClick={() => removeUrl(url.id)}
                                     >
                                         Remove
-                                    </button>
+                                    </Button>
                                 </li>
                             ))}
                         </ul>
