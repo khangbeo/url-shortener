@@ -21,10 +21,6 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const storedUrls = JSON.parse(localStorage.getItem("pastUrls")) || [];
-        setPastUrls(storedUrls);
-    }, []);
-    useEffect(() => {
         localStorage.setItem("pastUrls", JSON.stringify(pastUrls));
     }, [pastUrls]);
 
