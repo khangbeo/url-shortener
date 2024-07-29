@@ -1,19 +1,21 @@
 "use client";
 import { v4 as uuidv4 } from "uuid";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
+
 export default function Home() {
     const [url, setUrl] = useState("");
     const [shortenedUrl, setShortenedUrl] = useState("");
     const [pastUrls, setPastUrls] = useState(() => {
-        if (typeof window !== "undefined") {
-            return JSON.parse(localStorage.getItem("pastUrls")) || [];
-        }
-        return [];
+        return JSON.parse(localStorage.getItem("pastUrls")) || [];
     });
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        const storedUrls = JSON.parse(localStorage.getItem("pastUrls")) || [];
+        setPastUrls(storedUrls);
+    }, []);
     useEffect(() => {
         localStorage.setItem("pastUrls", JSON.stringify(pastUrls));
     }, [pastUrls]);
