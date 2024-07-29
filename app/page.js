@@ -9,7 +9,7 @@ export default function Home() {
     const [url, setUrl] = useState("");
     const [shortenedUrl, setShortenedUrl] = useState("");
     const [pastUrls, setPastUrls] = useLocalStorage("pastUrls", []);
-    const [theme, setTheme] = useLocalStorage("theme", "");
+    const [theme, setTheme] = useLocalStorage("theme", "light");
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -99,12 +99,12 @@ export default function Home() {
     return (
         <div className="flex flex-col min-h-screen" data-theme={theme}>
             <main className="flex-grow flex flex-col items-center justify-between p-20">
-                <label className="swap swap-rotate  fixed right-4 top-4 z-50">
+                <label className="swap swap-rotate fixed right-4 top-4 z-50">
                     {/* this hidden checkbox controls the state */}
                     <input
                         type="checkbox"
                         className="theme-controller"
-                        value={theme}
+                        checked={theme === "light" ? true : false}
                         onChange={handleThemeChange}
                     />
 
