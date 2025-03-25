@@ -8,80 +8,78 @@ export default function History({ pastUrls, setPastUrls, loading, removeUrl }) {
         setPastUrls([]);
     };
 
+    if (!pastUrls?.length) return null;
+
     return (
-        <>
-            {pastUrls?.length > 0 && (
-                <div className="card card-bordered bg-base-200 text-base-content w-full">
-                    <div className="card-body items-center text-center">
-                        <h3 className="card-title text-2xl">History</h3>
-                        <ul className="card-body">
-                            {pastUrls.map((url) => (
-                                <li
-                                    key={url.id}
-                                    className="mt-3 flex items-center justify-between"
-                                >
-                                    <span>
-                                        {url.date} {url.time}
-                                    </span>
-                                    <div className="bg-base-300 p-4 mx-3 rounded-2xl">
-                                        <Link
-                                            className="text-blue-500 hover:text-blue-700"
-                                            href={url.newUrl}
-                                            target="_blank"
-                                        >
-                                            {url.newUrl}
-                                        </Link>
-
-                                        <Button
-                                            loading={loading}
-                                            extra="ml-3 btn-square btn-ghost"
-                                            onClick={() =>
-                                                navigator.clipboard.writeText(
-                                                    url.newUrl
-                                                )
-                                            }
-                                        >
-                                            <FaClipboardList size={20} />
-                                        </Button>
-                                    </div>
-
-                                    <Button
-                                        type="error"
-                                        loading={loading}
-                                        extra="ml-3 btn-square btn-outline"
-                                        onClick={() => removeUrl(url.id)}
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="h-6 w-6"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M6 18L18 6M6 6l12 12"
-                                            />
-                                        </svg>
-                                    </Button>
-                                </li>
-                            ))}
-                        </ul>
-                        <div className="card-actions justify-end">
-                            <Button
-                                type="error"
-                                extra="mt-5"
-                                onClick={clearHistory}
-                            >
-                                <FaRegTrashAlt size={20} />
-                                Clear History
-                            </Button>
-                        </div>
-                    </div>
+        <div className="card bg-base-200 shadow-xl w-full">
+            <div className="card-body">
+                <div className="flex justify-between items-center">
+                    <h3 className="card-title text-xl">History</h3>
+                    <Button
+                        type="error"
+                        loading={loading}
+                        extra="btn-sm"
+                        onClick={clearHistory}
+                    >
+                        <FaRegTrashAlt className="mr-2" />
+                        Clear All
+                    </Button>
                 </div>
-            )}
-        </>
+                <div className="divider"></div>
+                <div className="space-y-4">
+                    {pastUrls.map((url) => (
+                        <div
+                            key={url.id}
+                            className="card bg-base-100 shadow-sm hover:shadow-md transition-shadow"
+                        >
+                            <div className="card-body p-4">
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                    <div className="flex-1">
+                                        <div className="text-sm opacity-70 mb-1">
+                                            {url.date} {url.time}
+                                        </div>
+                                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                                            <Link
+                                                className="link link-primary break-all"
+                                                href={url.newUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {url.newUrl}
+                                            </Link>
+                                            <div className="flex gap-2">
+                                                <Button
+                                                    loading={loading}
+                                                    extra="btn-sm btn-square"
+                                                    onClick={() =>
+                                                        navigator.clipboard.writeText(
+                                                            url.newUrl
+                                                        )
+                                                    }
+                                                >
+                                                    <FaClipboardList
+                                                        size={16}
+                                                    />
+                                                </Button>
+                                                <Button
+                                                    type="error"
+                                                    loading={loading}
+                                                    extra="btn-sm btn-square"
+                                                    onClick={() =>
+                                                        removeUrl(url.id)
+                                                    }
+                                                >
+                                                    <TiDelete size={20} />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
     );
 }
